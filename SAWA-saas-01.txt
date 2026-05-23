@@ -1,0 +1,747 @@
+cat > /mnt/user-data/outputs/fillup-saas.html << 'HTMLEOF'
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FillUp — Restaurant Sales Engine</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0f;
+  --sidebar:#0f0f17;
+  --surface:#14141f;
+  --surface2:#1a1a28;
+  --border:#ffffff12;
+  --border2:#ffffff20;
+  --accent:#f97316;
+  --accent2:#fb923c;
+  --green:#22c55e;
+  --blue:#3b82f6;
+  --purple:#a855f7;
+  --red:#ef4444;
+  --text:#f1f0ee;
+  --muted:#888899;
+  --font-head:'Syne',sans-serif;
+  --font-body:'DM Sans',sans-serif;
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:14px;overflow:hidden}
+
+/* LAYOUT */
+.shell{display:flex;height:100vh}
+.sidebar{width:220px;background:var(--sidebar);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;padding:0}
+.main{flex:1;overflow-y:auto;background:var(--bg)}
+
+/* SIDEBAR */
+.sidebar-logo{padding:24px 20px 20px;border-bottom:1px solid var(--border)}
+.logo-mark{display:flex;align-items:center;gap:10px}
+.logo-icon{width:32px;height:32px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-weight:800;font-size:14px;color:#fff}
+.logo-text{font-family:var(--font-head);font-weight:800;font-size:18px;letter-spacing:-.5px}
+.logo-text span{color:var(--accent)}
+
+.sidebar-section{padding:16px 12px 8px;font-size:10px;font-weight:600;letter-spacing:.12em;color:var(--muted);text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;cursor:pointer;transition:all .15s;color:var(--muted);font-size:13px;font-family:var(--font-body);border:none;background:transparent;width:100%;text-align:left}
+.nav-item:hover{background:var(--surface2);color:var(--text)}
+.nav-item.active{background:linear-gradient(135deg,rgba(249,115,22,.18),rgba(249,115,22,.06));color:var(--accent);border:1px solid rgba(249,115,22,.25)}
+.nav-item svg{width:16px;height:16px;flex-shrink:0}
+.nav-badge{margin-left:auto;background:var(--accent);color:#fff;font-size:10px;font-weight:600;padding:1px 6px;border-radius:10px}
+
+.sidebar-footer{margin-top:auto;padding:16px 12px;border-top:1px solid var(--border)}
+.venue-card{background:var(--surface2);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:10px;cursor:pointer}
+.venue-avatar{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#f97316,#fb923c);display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-weight:800;font-size:12px;color:#fff;flex-shrink:0}
+.venue-name{font-size:12px;font-weight:500;color:var(--text)}
+.venue-plan{font-size:10px;color:var(--muted)}
+
+/* TOPBAR */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:20px 32px;border-bottom:1px solid var(--border);background:var(--bg);position:sticky;top:0;z-index:10}
+.page-title{font-family:var(--font-head);font-size:22px;font-weight:700;letter-spacing:-.5px}
+.page-subtitle{font-size:12px;color:var(--muted);margin-top:1px}
+.topbar-actions{display:flex;align-items:center;gap:10px}
+.btn{padding:8px 16px;border-radius:8px;font-size:13px;font-family:var(--font-body);font-weight:500;cursor:pointer;border:none;transition:all .15s}
+.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border2)}
+.btn-ghost:hover{color:var(--text);border-color:var(--border2)}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:var(--accent2)}
+.btn svg{width:14px;height:14px;vertical-align:-2px;margin-right:5px}
+
+/* CONTENT */
+.content{padding:28px 32px}
+
+/* STAT CARDS */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;position:relative;overflow:hidden;transition:border-color .2s}
+.stat-card:hover{border-color:var(--border2)}
+.stat-card::before{content:'';position:absolute;top:0;right:0;width:60px;height:60px;border-radius:0 14px 0 60px;opacity:.12}
+.stat-card.orange::before{background:var(--accent)}
+.stat-card.green::before{background:var(--green)}
+.stat-card.blue::before{background:var(--blue)}
+.stat-card.purple::before{background:var(--purple)}
+.stat-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:14px}
+.stat-icon.orange{background:rgba(249,115,22,.15)}
+.stat-icon.green{background:rgba(34,197,94,.15)}
+.stat-icon.blue{background:rgba(59,130,246,.15)}
+.stat-icon.purple{background:rgba(168,85,247,.15)}
+.stat-icon svg{width:16px;height:16px}
+.stat-icon.orange svg{color:var(--accent)}
+.stat-icon.green svg{color:var(--green)}
+.stat-icon.blue svg{color:var(--blue)}
+.stat-icon.purple svg{color:var(--purple)}
+.stat-val{font-family:var(--font-head);font-size:28px;font-weight:700;letter-spacing:-1px;line-height:1}
+.stat-label{font-size:12px;color:var(--muted);margin-top:4px}
+.stat-delta{font-size:11px;margin-top:8px;display:flex;align-items:center;gap:3px}
+.stat-delta.up{color:var(--green)}
+.stat-delta.down{color:var(--red)}
+
+/* TWO COL */
+.two-col{display:grid;grid-template-columns:1fr 360px;gap:14px;margin-bottom:28px}
+
+/* CHART AREA */
+.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.card-title{font-family:var(--font-head);font-size:15px;font-weight:700}
+.card-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.pill-group{display:flex;gap:4px}
+.pill{padding:4px 10px;border-radius:20px;font-size:11px;cursor:pointer;border:1px solid var(--border);color:var(--muted);background:transparent;font-family:var(--font-body)}
+.pill.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.chart-wrap{height:180px;position:relative}
+.chart-bars{display:flex;align-items:flex-end;gap:6px;height:100%}
+.bar-group{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.bar-inner{width:100%;border-radius:4px 4px 0 0;transition:height .6s cubic-bezier(.34,1.56,.64,1);position:relative;cursor:pointer}
+.bar-inner:hover{filter:brightness(1.2)}
+.bar-label{font-size:10px;color:var(--muted);white-space:nowrap}
+.chart-legend{display:flex;gap:14px;margin-top:12px}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)}
+.legend-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+
+/* SLOW HOURS */
+.slow-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px}
+.hour-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:14px}
+.hour-cell{border-radius:8px;padding:8px 6px;text-align:center;cursor:pointer;transition:all .15s;border:1px solid transparent}
+.hour-cell:hover{border-color:var(--border2)}
+.hour-cell.dead{background:rgba(239,68,68,.12);border-color:rgba(239,68,68,.2)}
+.hour-cell.slow{background:rgba(249,115,22,.1);border-color:rgba(249,115,22,.15)}
+.hour-cell.ok{background:rgba(34,197,94,.08);border-color:rgba(34,197,94,.12)}
+.hour-cell.busy{background:rgba(34,197,94,.18);border-color:rgba(34,197,94,.25)}
+.hour-time{font-size:11px;font-weight:500;color:var(--text)}
+.hour-occ{font-size:10px;color:var(--muted);margin-top:2px}
+
+/* CAMPAIGNS TABLE */
+.table-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;margin-bottom:28px;overflow:hidden}
+.table-head{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr 80px;gap:12px;padding:12px 20px;border-bottom:1px solid var(--border);font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.table-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr 80px;gap:12px;padding:14px 20px;border-bottom:1px solid var(--border);align-items:center;transition:background .12s;cursor:pointer}
+.table-row:last-child{border-bottom:none}
+.table-row:hover{background:var(--surface2)}
+.camp-name{font-weight:500;font-size:13px}
+.camp-tag{font-size:10px;color:var(--muted);margin-top:2px}
+.status-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:500}
+.status-badge.live{background:rgba(34,197,94,.12);color:var(--green)}
+.status-badge.live::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite}
+.status-badge.sent{background:rgba(59,130,246,.1);color:var(--blue)}
+.status-badge.draft{background:rgba(255,255,255,.06);color:var(--muted)}
+.status-badge.scheduled{background:rgba(168,85,247,.1);color:var(--purple)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.metric-cell{font-size:13px;font-weight:500}
+.metric-cell .sub{font-size:11px;color:var(--muted);font-weight:400}
+
+/* CUSTOMERS */
+.customers-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px}
+.customer-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px;transition:border-color .15s;cursor:pointer}
+.customer-card:hover{border-color:var(--border2)}
+.cust-top{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.cust-avatar{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-weight:700;font-size:14px;flex-shrink:0}
+.cust-name{font-size:14px;font-weight:500}
+.cust-phone{font-size:11px;color:var(--muted)}
+.cust-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.cust-stat{background:var(--surface2);border-radius:8px;padding:8px;text-align:center}
+.cust-stat-val{font-size:13px;font-weight:600;font-family:var(--font-head)}
+.cust-stat-label{font-size:10px;color:var(--muted);margin-top:1px}
+.tag-chip{display:inline-block;font-size:10px;padding:2px 7px;border-radius:10px;margin-top:8px}
+.tag-vip{background:rgba(249,115,22,.15);color:var(--accent)}
+.tag-lapsed{background:rgba(239,68,68,.12);color:var(--red)}
+.tag-new{background:rgba(34,197,94,.12);color:var(--green)}
+.tag-regular{background:rgba(59,130,246,.1);color:var(--blue)}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border2);border-radius:18px;width:520px;max-height:85vh;overflow-y:auto}
+.modal-header{padding:24px 24px 0;display:flex;align-items:flex-start;justify-content:space-between}
+.modal-title{font-family:var(--font-head);font-size:20px;font-weight:700}
+.modal-close{background:var(--surface2);border:none;color:var(--muted);width:28px;height:28px;border-radius:7px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px}
+.modal-close:hover{color:var(--text)}
+.modal-body{padding:20px 24px 24px}
+.form-group{margin-bottom:16px}
+.form-label{font-size:12px;font-weight:500;color:var(--muted);margin-bottom:6px;display:block;text-transform:uppercase;letter-spacing:.06em}
+.form-input{width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:9px;padding:10px 13px;color:var(--text);font-family:var(--font-body);font-size:13px;outline:none;transition:border .15s}
+.form-input:focus{border-color:var(--accent)}
+.form-input::placeholder{color:var(--muted)}
+textarea.form-input{resize:vertical;min-height:80px}
+select.form-input{cursor:pointer}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.preview-bubble{background:var(--surface2);border-radius:12px 12px 12px 3px;padding:12px 14px;font-size:13px;line-height:1.6;color:var(--text);margin-top:8px;border:1px solid var(--border);max-width:85%}
+.preview-label{font-size:10px;color:var(--muted);margin-bottom:6px;display:flex;align-items:center;gap:5px}
+.wa-dot{width:8px;height:8px;border-radius:50%;background:#25d366}
+.form-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)}
+
+/* NOTIFICATION */
+.notif{position:fixed;bottom:24px;right:24px;background:var(--green);color:#fff;padding:12px 18px;border-radius:10px;font-size:13px;font-weight:500;z-index:200;transform:translateY(80px);opacity:0;transition:all .3s;display:flex;align-items:center;gap:8px}
+.notif.show{transform:translateY(0);opacity:1}
+
+/* EMPTY STATES */
+.page-section{display:none}
+.page-section.active{display:block}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">
+        <div class="logo-icon">F</div>
+        <div class="logo-text">Fill<span>Up</span></div>
+      </div>
+    </div>
+
+    <div class="sidebar-section">Main</div>
+    <nav style="padding:0 8px">
+      <button class="nav-item active" onclick="showPage('dashboard',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+      </button>
+      <button class="nav-item" onclick="showPage('campaigns',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.68A2 2 0 012 .18h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92z"/></svg>
+        Campaigns
+        <span class="nav-badge">3</span>
+      </button>
+      <button class="nav-item" onclick="showPage('customers',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        Customers
+      </button>
+      <button class="nav-item" onclick="showPage('analytics',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        Analytics
+      </button>
+    </nav>
+
+    <div class="sidebar-section">Settings</div>
+    <nav style="padding:0 8px">
+      <button class="nav-item" onclick="showPage('settings',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M19.07 19.07l-1.41-1.41M4.93 19.07l1.41-1.41M1 12h2M21 12h2M12 1v2M12 21v2"/></svg>
+        Settings
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="venue-card">
+        <div class="venue-avatar">CB</div>
+        <div>
+          <div class="venue-name">Café Blend</div>
+          <div class="venue-plan">Growth Plan · Active</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- DASHBOARD PAGE -->
+    <div class="page-section active" id="page-dashboard">
+      <div class="topbar">
+        <div>
+          <div class="page-title">Dashboard</div>
+          <div class="page-subtitle">Saturday, May 23, 2026 · Café Blend, Manama</div>
+        </div>
+        <div class="topbar-actions">
+          <button class="btn btn-ghost">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;vertical-align:-2px;margin-right:5px"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            Search
+          </button>
+          <button class="btn btn-primary" onclick="openModal()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:13px;height:13px;vertical-align:-2px;margin-right:5px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            New Campaign
+          </button>
+        </div>
+      </div>
+      <div class="content">
+
+        <!-- STATS -->
+        <div class="stats-grid">
+          <div class="stat-card orange">
+            <div class="stat-icon orange">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+            </div>
+            <div class="stat-val">BD 4,280</div>
+            <div class="stat-label">Revenue this month</div>
+            <div class="stat-delta up">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:11px;height:11px"><polyline points="18 15 12 9 6 15"/></svg>
+              +22% from campaigns
+            </div>
+          </div>
+          <div class="stat-card green">
+            <div class="stat-icon green">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+            </div>
+            <div class="stat-val">1,240</div>
+            <div class="stat-label">Total customers</div>
+            <div class="stat-delta up">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:11px;height:11px"><polyline points="18 15 12 9 6 15"/></svg>
+              +84 this month
+            </div>
+          </div>
+          <div class="stat-card blue">
+            <div class="stat-icon blue">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            </div>
+            <div class="stat-val">38%</div>
+            <div class="stat-label">Campaign open rate</div>
+            <div class="stat-delta up">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:11px;height:11px"><polyline points="18 15 12 9 6 15"/></svg>
+              vs 20% industry avg
+            </div>
+          </div>
+          <div class="stat-card purple">
+            <div class="stat-icon purple">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </div>
+            <div class="stat-val">127</div>
+            <div class="stat-label">Visits from campaigns</div>
+            <div class="stat-delta up">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:11px;height:11px"><polyline points="18 15 12 9 6 15"/></svg>
+              This week
+            </div>
+          </div>
+        </div>
+
+        <!-- CHART + SLOW HOURS -->
+        <div class="two-col">
+          <div class="chart-card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Revenue recovered</div>
+                <div class="card-sub">From slow-hour campaigns · last 7 days</div>
+              </div>
+              <div class="pill-group">
+                <button class="pill active">7d</button>
+                <button class="pill" onclick="switchPill(this)">30d</button>
+                <button class="pill" onclick="switchPill(this)">90d</button>
+              </div>
+            </div>
+            <div class="chart-wrap">
+              <div class="chart-bars" id="chartBars"></div>
+            </div>
+            <div class="chart-legend">
+              <div class="legend-item"><div class="legend-dot" style="background:var(--accent)"></div>Campaign revenue</div>
+              <div class="legend-item"><div class="legend-dot" style="background:var(--surface2);border:1px solid var(--border2)"></div>Baseline</div>
+            </div>
+          </div>
+
+          <div class="slow-card">
+            <div class="card-header" style="margin-bottom:6px">
+              <div>
+                <div class="card-title">Today's heat map</div>
+                <div class="card-sub">Occupancy by hour</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap">
+              <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--muted)"><div style="width:10px;height:10px;border-radius:3px;background:rgba(239,68,68,.25)"></div>Dead (&lt;20%)</div>
+              <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--muted)"><div style="width:10px;height:10px;border-radius:3px;background:rgba(249,115,22,.2)"></div>Slow</div>
+              <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--muted)"><div style="width:10px;height:10px;border-radius:3px;background:rgba(34,197,94,.15)"></div>OK</div>
+              <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--muted)"><div style="width:10px;height:10px;border-radius:3px;background:rgba(34,197,94,.3)"></div>Busy</div>
+            </div>
+            <div class="hour-grid" id="hourGrid"></div>
+          </div>
+        </div>
+
+        <!-- CAMPAIGNS TABLE -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+          <div>
+            <div style="font-family:var(--font-head);font-size:15px;font-weight:700">Recent campaigns</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:2px">Click any row to view details</div>
+          </div>
+          <button class="btn btn-ghost" onclick="showPage('campaigns',document.querySelector('.nav-item:nth-child(2)'))">View all</button>
+        </div>
+        <div class="table-card">
+          <div class="table-head">
+            <div>Campaign</div>
+            <div>Status</div>
+            <div>Sent</div>
+            <div>Opened</div>
+            <div>Revenue</div>
+            <div></div>
+          </div>
+          <div class="table-row" onclick="showNotif('Campaign details coming soon!')">
+            <div><div class="camp-name">Tuesday slow hours ☕</div><div class="camp-tag">WhatsApp · Lapsed customers</div></div>
+            <div><span class="status-badge live">Live</span></div>
+            <div class="metric-cell">284<div class="sub">msgs</div></div>
+            <div class="metric-cell">109<div class="sub">41%</div></div>
+            <div class="metric-cell" style="color:var(--green)">BD 340</div>
+            <div><button class="btn btn-ghost" style="padding:5px 10px;font-size:11px">View</button></div>
+          </div>
+          <div class="table-row" onclick="showNotif('Campaign details coming soon!')">
+            <div><div class="camp-name">Weekend brunch boost</div><div class="camp-tag">SMS · All customers</div></div>
+            <div><span class="status-badge sent">Sent</span></div>
+            <div class="metric-cell">520<div class="sub">msgs</div></div>
+            <div class="metric-cell">186<div class="sub">36%</div></div>
+            <div class="metric-cell" style="color:var(--green)">BD 780</div>
+            <div><button class="btn btn-ghost" style="padding:5px 10px;font-size:11px">View</button></div>
+          </div>
+          <div class="table-row" onclick="showNotif('Campaign details coming soon!')">
+            <div><div class="camp-name">VIP loyalty reward</div><div class="camp-tag">WhatsApp · VIP segment</div></div>
+            <div><span class="status-badge scheduled">Scheduled</span></div>
+            <div class="metric-cell">64<div class="sub">msgs</div></div>
+            <div class="metric-cell">—</div>
+            <div class="metric-cell">—</div>
+            <div><button class="btn btn-ghost" style="padding:5px 10px;font-size:11px">Edit</button></div>
+          </div>
+          <div class="table-row" onclick="showNotif('Campaign details coming soon!')">
+            <div><div class="camp-name">Monday morning coffee</div><div class="camp-tag">WhatsApp · Nearby customers</div></div>
+            <div><span class="status-badge draft">Draft</span></div>
+            <div class="metric-cell">—</div>
+            <div class="metric-cell">—</div>
+            <div class="metric-cell">—</div>
+            <div><button class="btn btn-ghost" style="padding:5px 10px;font-size:11px">Edit</button></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- CAMPAIGNS PAGE -->
+    <div class="page-section" id="page-campaigns">
+      <div class="topbar">
+        <div>
+          <div class="page-title">Campaigns</div>
+          <div class="page-subtitle">Manage and send targeted offers to your customers</div>
+        </div>
+        <div class="topbar-actions">
+          <button class="btn btn-primary" onclick="openModal()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:13px;height:13px;vertical-align:-2px;margin-right:5px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            New Campaign
+          </button>
+        </div>
+      </div>
+      <div class="content">
+        <div class="stats-grid">
+          <div class="stat-card orange"><div class="stat-icon orange"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><div class="stat-val">8</div><div class="stat-label">Total campaigns</div></div>
+          <div class="stat-card green"><div class="stat-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div><div class="stat-val">3</div><div class="stat-label">Active / Live</div></div>
+          <div class="stat-card blue"><div class="stat-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.68A2 2 0 012 .18h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/></svg></div><div class="stat-val">1,840</div><div class="stat-label">Messages sent</div></div>
+          <div class="stat-card purple"><div class="stat-icon purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div><div class="stat-val" style="color:var(--green)">BD 2,140</div><div class="stat-label">Total revenue driven</div></div>
+        </div>
+        <div class="table-card">
+          <div class="table-head">
+            <div>Campaign</div><div>Status</div><div>Sent</div><div>Opened</div><div>Revenue</div><div></div>
+          </div>
+          <div class="table-row"><div><div class="camp-name">Tuesday slow hours ☕</div><div class="camp-tag">WhatsApp · Lapsed</div></div><div><span class="status-badge live">Live</span></div><div class="metric-cell">284<div class="sub">msgs</div></div><div class="metric-cell">109<div class="sub">41%</div></div><div class="metric-cell" style="color:var(--green)">BD 340</div><div><button class="btn btn-ghost" style="padding:5px 10px;font-size:11px" onclick="showNotif('Opening campaign...')">View</button></div></div>
+          <div class="table-row"><div><div class="camp-name">Weekend brunch boost</div><div class="camp-tag">SMS · All customers</div></div><div><span class="status-badge sent">Sent</span></div><div class="metric-cell">520<div class="sub">msgs</div></div><div class="metric-cell">186<div class="sub">36%</div></div><div class="metric-cell" style="color:var(--green)">BD 780</div><div><button class="btn btn-ghost" style="padding:5px 10px;font-size:11px" onclick="showNotif('Opening campaign...')">View</button></div></div>
+          <div class="table-row"><div><div class="camp-name">VIP loyalty reward</div><div class="camp-tag">WhatsApp · VIP</div></div><div><span class="status-badge scheduled">Scheduled</span></div><div class="metric-cell">64<div class="sub">queued</div></div><div class="metric-cell">—</div><div class="metric-cell">—</div><div><button class="btn btn-ghost" style="padding:5px 10px;font-size:11px" onclick="openModal()">Edit</button></div></div>
+          <div class="table-row"><div><div class="camp-name">Monday morning coffee</div><div class="camp-tag">WhatsApp · Nearby</div></div><div><span class="status-badge draft">Draft</span></div><div class="metric-cell">—</div><div class="metric-cell">—</div><div class="metric-cell">—</div><div><button class="btn btn-ghost" style="padding:5px 10px;font-size:11px" onclick="openModal()">Edit</button></div></div>
+          <div class="table-row"><div><div class="camp-name">Ramadan special offer</div><div class="camp-tag">WhatsApp · All</div></div><div><span class="status-badge sent">Sent</span></div><div class="metric-cell">890<div class="sub">msgs</div></div><div class="metric-cell">312<div class="sub">35%</div></div><div class="metric-cell" style="color:var(--green)">BD 1,020</div><div><button class="btn btn-ghost" style="padding:5px 10px;font-size:11px" onclick="showNotif('Opening campaign...')">View</button></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CUSTOMERS PAGE -->
+    <div class="page-section" id="page-customers">
+      <div class="topbar">
+        <div>
+          <div class="page-title">Customers</div>
+          <div class="page-subtitle">1,240 contacts · 84 added this month</div>
+        </div>
+        <div class="topbar-actions">
+          <button class="btn btn-ghost" onclick="showNotif('CSV import coming soon!')">Import CSV</button>
+          <button class="btn btn-primary" onclick="showNotif('Add customer form coming soon!')">Add Customer</button>
+        </div>
+      </div>
+      <div class="content">
+        <div class="customers-grid" id="customerGrid"></div>
+      </div>
+    </div>
+
+    <!-- ANALYTICS PAGE -->
+    <div class="page-section" id="page-analytics">
+      <div class="topbar">
+        <div>
+          <div class="page-title">Analytics</div>
+          <div class="page-subtitle">Performance overview · last 30 days</div>
+        </div>
+      </div>
+      <div class="content">
+        <div class="stats-grid">
+          <div class="stat-card orange"><div class="stat-icon orange"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div><div class="stat-val">BD 4,280</div><div class="stat-label">Revenue from campaigns</div><div class="stat-delta up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:11px;height:11px"><polyline points="18 15 12 9 6 15"/></svg>+22% vs last month</div></div>
+          <div class="stat-card green"><div class="stat-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><div class="stat-val">38%</div><div class="stat-label">Avg open rate</div><div class="stat-delta up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:11px;height:11px"><polyline points="18 15 12 9 6 15"/></svg>vs 20% industry avg</div></div>
+          <div class="stat-card blue"><div class="stat-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div class="stat-val">127</div><div class="stat-label">New visits from campaigns</div></div>
+          <div class="stat-card purple"><div class="stat-icon purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg></div><div class="stat-val">BD 21.4</div><div class="stat-label">Revenue per campaign msg</div></div>
+        </div>
+        <div class="chart-card">
+          <div class="card-header">
+            <div><div class="card-title">Monthly revenue trend</div><div class="card-sub">Campaign-driven revenue · BD</div></div>
+          </div>
+          <div class="chart-wrap" style="height:220px">
+            <div class="chart-bars" id="analyticsChart"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS PAGE -->
+    <div class="page-section" id="page-settings">
+      <div class="topbar">
+        <div><div class="page-title">Settings</div><div class="page-subtitle">Manage your account and integrations</div></div>
+      </div>
+      <div class="content">
+        <div style="max-width:560px">
+          <div class="chart-card" style="margin-bottom:14px">
+            <div class="card-title" style="margin-bottom:16px">Venue details</div>
+            <div class="form-group"><label class="form-label">Venue name</label><input class="form-input" value="Café Blend"></div>
+            <div class="form-group"><label class="form-label">Location</label><input class="form-input" value="Manama, Bahrain"></div>
+            <div class="form-row">
+              <div class="form-group"><label class="form-label">WhatsApp number</label><input class="form-input" value="+973 3300 0000"></div>
+              <div class="form-group"><label class="form-label">Category</label><select class="form-input"><option>Coffee shop</option><option>Restaurant</option><option>Bakery</option></select></div>
+            </div>
+            <button class="btn btn-primary" onclick="showNotif('Settings saved!')">Save changes</button>
+          </div>
+          <div class="chart-card">
+            <div class="card-title" style="margin-bottom:4px">Integrations</div>
+            <div class="card-sub" style="margin-bottom:16px">Connect your existing tools</div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:var(--surface2);border-radius:10px"><div style="display:flex;align-items:center;gap:10px"><div style="width:32px;height:32px;background:#25d366;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff;font-weight:700">W</div><div><div style="font-size:13px;font-weight:500">WhatsApp Business</div><div style="font-size:11px;color:var(--muted)">Connected · sending enabled</div></div></div><span class="status-badge live" style="font-size:11px">Active</span></div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:var(--surface2);border-radius:10px"><div style="display:flex;align-items:center;gap:10px"><div style="width:32px;height:32px;background:#0088cc;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;font-weight:700">SMS</div><div><div style="font-size:13px;font-weight:500">SMS Gateway</div><div style="font-size:11px;color:var(--muted)">Not connected</div></div></div><button class="btn btn-ghost" style="padding:5px 12px;font-size:11px" onclick="showNotif('SMS setup coming soon!')">Connect</button></div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:var(--surface2);border-radius:10px"><div style="display:flex;align-items:center;gap:10px"><div style="width:32px;height:32px;background:#ff6900;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;font-weight:700">POS</div><div><div style="font-size:13px;font-weight:500">POS Integration</div><div style="font-size:11px;color:var(--muted)">Not connected</div></div></div><button class="btn btn-ghost" style="padding:5px 12px;font-size:11px" onclick="showNotif('POS integration coming soon!')">Connect</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- NEW CAMPAIGN MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">New campaign</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:3px">Send a targeted offer to your customers</div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Campaign name</label>
+        <input class="form-input" placeholder="e.g. Tuesday afternoon special" id="campName">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Channel</label>
+          <select class="form-input" id="campChannel">
+            <option>WhatsApp</option>
+            <option>SMS</option>
+            <option>Both</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Target segment</label>
+          <select class="form-input" id="campSegment">
+            <option>Lapsed customers (14+ days)</option>
+            <option>VIP customers</option>
+            <option>All customers</option>
+            <option>New customers</option>
+            <option>Nearby customers</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Message</label>
+        <textarea class="form-input" placeholder="Hey {name}! It's quiet at Café Blend right now — come in this afternoon and get 20% off any order. Valid until 6pm today only ☕" id="campMsg" oninput="updatePreview()"></textarea>
+      </div>
+      <div>
+        <div class="preview-label"><div class="wa-dot"></div> WhatsApp preview</div>
+        <div class="preview-bubble" id="msgPreview">Hey Sara! It's quiet at Café Blend right now — come in this afternoon and get 20% off any order. Valid until 6pm today only ☕</div>
+      </div>
+      <div class="form-row" style="margin-top:16px">
+        <div class="form-group">
+          <label class="form-label">Send time</label>
+          <select class="form-input">
+            <option>Send now</option>
+            <option>Schedule for later</option>
+            <option>Auto (when slow detected)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Offer type</label>
+          <select class="form-input">
+            <option>% discount</option>
+            <option>Free item</option>
+            <option>Buy 1 get 1</option>
+            <option>No offer (info only)</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-footer">
+        <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-ghost" onclick="showNotif('Saved as draft!');closeModal()">Save draft</button>
+        <button class="btn btn-primary" onclick="sendCampaign()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:13px;height:13px;vertical-align:-2px;margin-right:5px"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          Send campaign
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NOTIFICATION -->
+<div class="notif" id="notif">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:14px;height:14px"><polyline points="20 6 9 17 4 12"/></svg>
+  <span id="notifText">Done!</span>
+</div>
+
+<script>
+const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const revenue = [120,280,190,340,410,520,390];
+const maxRev = Math.max(...revenue);
+
+function buildChart(containerId, data, labels) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  el.innerHTML = '';
+  data.forEach((v, i) => {
+    const h = Math.round((v / Math.max(...data)) * 100);
+    const g = document.createElement('div');
+    g.className = 'bar-group';
+    g.innerHTML = `
+      <div style="flex:1;display:flex;align-items:flex-end;width:100%">
+        <div class="bar-inner" style="height:${h}%;background:linear-gradient(180deg,var(--accent),rgba(249,115,22,.5));min-height:4px" title="BD ${v}"></div>
+      </div>
+      <div class="bar-label">${labels[i]}</div>`;
+    el.appendChild(g);
+  });
+}
+
+function buildAnalyticsChart() {
+  const el = document.getElementById('analyticsChart');
+  if (!el) return;
+  const months = ['Dec','Jan','Feb','Mar','Apr','May'];
+  const vals = [1800, 2100, 2400, 3100, 3700, 4280];
+  el.innerHTML = '';
+  vals.forEach((v,i) => {
+    const h = Math.round((v / Math.max(...vals)) * 100);
+    const g = document.createElement('div');
+    g.className = 'bar-group';
+    g.innerHTML = `
+      <div style="font-size:10px;color:var(--muted);margin-bottom:3px">BD ${v.toLocaleString()}</div>
+      <div style="flex:1;display:flex;align-items:flex-end;width:100%">
+        <div class="bar-inner" style="height:${h}%;background:linear-gradient(180deg,var(--blue),rgba(59,130,246,.4));min-height:4px"></div>
+      </div>
+      <div class="bar-label">${months[i]}</div>`;
+    el.appendChild(g);
+  });
+}
+
+const hours = [
+  {t:'8am',occ:65,cls:'ok'},{t:'9am',occ:80,cls:'busy'},{t:'10am',occ:72,cls:'ok'},{t:'11am',occ:60,cls:'ok'},
+  {t:'12pm',occ:95,cls:'busy'},{t:'1pm',occ:90,cls:'busy'},{t:'2pm',occ:18,cls:'dead'},{t:'3pm',occ:12,cls:'dead'},
+  {t:'4pm',occ:22,cls:'slow'},{t:'5pm',occ:35,cls:'slow'},{t:'6pm',occ:55,cls:'ok'},{t:'7pm',occ:85,cls:'busy'}
+];
+
+function buildHourGrid() {
+  const g = document.getElementById('hourGrid');
+  if (!g) return;
+  g.innerHTML = hours.map(h => `
+    <div class="hour-cell ${h.cls}" onclick="showNotif('${h.t}: ${h.occ}% occupancy — ${h.cls === 'dead' || h.cls === 'slow' ? 'Campaign recommended!' : 'Looking good!'}')">
+      <div class="hour-time">${h.t}</div>
+      <div class="hour-occ">${h.occ}%</div>
+    </div>`).join('');
+}
+
+const customers = [
+  {name:'Sara Al-Khalifa',phone:'+973 3312 xxxx',visits:24,spend:'BD 186',days:3,tag:'vip',col:'#f97316'},
+  {name:'Ahmed Mansoor',phone:'+973 3388 xxxx',visits:8,spend:'BD 62',days:18,tag:'lapsed',col:'#a855f7'},
+  {name:'Layla Hassan',phone:'+973 3355 xxxx',visits:2,spend:'BD 14',days:5,tag:'new',col:'#22c55e'},
+  {name:'Omar Yusuf',phone:'+973 3341 xxxx',visits:15,spend:'BD 110',days:7,tag:'regular',col:'#3b82f6'},
+  {name:'Fatima Al-Zain',phone:'+973 3377 xxxx',visits:31,spend:'BD 248',days:1,tag:'vip',col:'#f97316'},
+  {name:'Khalid Ibrahim',phone:'+973 3322 xxxx',visits:6,spend:'BD 45',days:22,tag:'lapsed',col:'#a855f7'},
+];
+
+function buildCustomers() {
+  const g = document.getElementById('customerGrid');
+  if (!g) return;
+  g.innerHTML = customers.map(c => {
+    const init = c.name.split(' ').map(w=>w[0]).join('').slice(0,2);
+    const tagClass = {vip:'tag-vip',lapsed:'tag-lapsed',new:'tag-new',regular:'tag-regular'}[c.tag];
+    const tagLabel = {vip:'VIP',lapsed:'Lapsed',new:'New',regular:'Regular'}[c.tag];
+    return `<div class="customer-card" onclick="showNotif('Opening ${c.name} profile...')">
+      <div class="cust-top">
+        <div class="cust-avatar" style="background:${c.col}22;color:${c.col}">${init}</div>
+        <div>
+          <div class="cust-name">${c.name}</div>
+          <div class="cust-phone">${c.phone}</div>
+          <span class="tag-chip ${tagClass}">${tagLabel}</span>
+        </div>
+      </div>
+      <div class="cust-stats">
+        <div class="cust-stat"><div class="cust-stat-val">${c.visits}</div><div class="cust-stat-label">Visits</div></div>
+        <div class="cust-stat"><div class="cust-stat-val">${c.spend}</div><div class="cust-stat-label">Spent</div></div>
+        <div class="cust-stat"><div class="cust-stat-val">${c.days}d</div><div class="cust-stat-label">Last visit</div></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function showPage(page, btn) {
+  document.querySelectorAll('.page-section').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  if (page === 'analytics') buildAnalyticsChart();
+}
+
+function switchPill(el) {
+  el.closest('.pill-group').querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  const newData = revenue.map(v => Math.round(v * (0.8 + Math.random() * 0.5)));
+  buildChart('chartBars', newData, days);
+}
+
+function openModal() { document.getElementById('modalOverlay').classList.add('open'); }
+function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+
+function updatePreview() {
+  const msg = document.getElementById('campMsg').value;
+  document.getElementById('msgPreview').textContent = msg || 'Your message will appear here...';
+}
+
+function sendCampaign() {
+  const name = document.getElementById('campName').value || 'New campaign';
+  closeModal();
+  showNotif(`Campaign "${name}" sent successfully!`);
+}
+
+let notifTimer;
+function showNotif(msg) {
+  const n = document.getElementById('notif');
+  document.getElementById('notifText').textContent = msg;
+  n.classList.add('show');
+  clearTimeout(notifTimer);
+  notifTimer = setTimeout(() => n.classList.remove('show'), 3000);
+}
+
+buildChart('chartBars', revenue, days);
+buildHourGrid();
+buildCustomers();
+</script>
+</body>
+</html>
+HTMLEOF
+Output
+
+exit code 0
